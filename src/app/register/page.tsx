@@ -55,7 +55,7 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-2">
+        <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-2">
             <Card className="w-full max-w-md border-none shadow-lg outline outline-black/5 rounded-xl">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
