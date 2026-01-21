@@ -64,7 +64,8 @@ export function Header() {
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-slate-800 text-black
+           dark:text-white border-gray-200 shadow-lg outline outline-black/5 ">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium">{userFullName}</p>

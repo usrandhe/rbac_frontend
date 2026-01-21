@@ -1,7 +1,12 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { auth } from '@/lib/auth.config';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+//const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+// Use absolute URL for server-side (internal) and relative URL for client-side (proxy)
+// Fallback to localhost:5000 if env vars are missing
+const API_URL = typeof window === 'undefined'
+  ? (process.env.INTERNAL_API_URL || 'http://localhost:5000/api/v1')
+  : (process.env.NEXT_PUBLIC_API_URL || '/api/v1');
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -19,19 +24,19 @@ apiClient.interceptors.request.use(
       // We'll get the token from the session on client-side
       const { getSession } = await import('next-auth/react');
       const session = await getSession();
-      
+
       if (session?.user?.accessToken) {
         config.headers.Authorization = `Bearer ${session.user.accessToken}`;
       }
     } else {
       // For server-side requests
       const session = await auth();
-      
+
       if (session?.user?.accessToken) {
         config.headers.Authorization = `Bearer ${session.user.accessToken}`;
       }
     }
-    
+
     return config;
   },
   (error) => {
@@ -51,7 +56,7 @@ apiClient.interceptors.response.use(
         window.location.href = '/login';
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -63,12 +68,12 @@ export const handleApiError = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
     const message = error.response?.data?.message;
     if (message) return message;
-    
+
     if (error.response?.status === 404) return 'Resource not found';
     if (error.response?.status === 403) return 'You do not have permission to perform this action';
     if (error.response?.status === 401) return 'Please log in to continue';
     if (error.response?.status === 500) return 'Server error. Please try again later';
   }
-  
+
   return 'An unexpected error occurred';
 };
