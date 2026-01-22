@@ -10,21 +10,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useDeleteRole } from '@/hooks/use-roles';
-import { Role } from '@/types';
+import { useDeletePermission } from '@/hooks/use-permissions';
+import { Permission } from '@/types';
 import { Loader2 } from 'lucide-react';
 
-interface DeleteRoleDialogProps {
-  role: Role;
+interface DeletePermissionDialogProps {
+  permission: Permission;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function DeleteRoleDialog({ role, open, onOpenChange }: DeleteRoleDialogProps) {
-  const { mutate: deleteRole, isPending } = useDeleteRole();
+export function DeletePermissionDialog({ permission, open, onOpenChange }: DeletePermissionDialogProps) {
+  const { mutate: deletePermission, isPending } = useDeletePermission();
 
   const handleDelete = () => {
-    deleteRole(role.id, {
+    deletePermission(permission.id, {
       onSuccess: () => {
         onOpenChange(false);
       },
@@ -37,11 +37,12 @@ export function DeleteRoleDialog({ role, open, onOpenChange }: DeleteRoleDialogP
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete the role <strong>{role.name}</strong>.
-            {role.userCount ? (
+            This will permanently delete the permission{' '}
+            <strong className="font-mono">{permission.name}</strong>.
+            {permission._count?.roles ? (
               <span className="text-destructive font-medium">
                 {' '}
-                This role is currently assigned to {role.userCount} user(s).
+                This permission is currently assigned to {permission._count.roles} role(s).
               </span>
             ) : null}
             {' '}This action cannot be undone.
