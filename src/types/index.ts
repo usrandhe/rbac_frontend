@@ -50,9 +50,16 @@ export interface Role {
   updatedAt: string;
   permissions?: Permission[];
   _count?: {
-    users: number;
+    userRoles: number;
     permissions: number;
   };
+  userCount: number;
+  permissionCount: number;
+}
+
+export interface RoleCount {
+  userCount: number;
+  permissionCount: number;
 }
 
 export interface CreateRoleInput {
