@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useDebouncedSearch } from '@/hooks/use-debounced-search';
 import {
     ColumnDef,
     flexRender,
@@ -34,18 +33,17 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MoreHorizontal, ChevronLeft, ChevronRight, Search, Edit, Trash2, Shield } from 'lucide-react';
-import { User } from '@/types';
-import { getUserInitials } from '@/lib/auth';
-import { EditUserDialog } from '@/components/users/edit-user-dialog';
-import { DeleteUserDialog } from '@/components/users/delete-user-dialog';
-import { AssignRolesDialog } from '@/components/users/assign-roles-dialog';
+import { Role } from '@/types';
+import { EditRoleDialog } from '@/components/roles/edit-role-dialog';
+import { DeleteRoleDialog } from '@/components/roles/delete-role-dialog';
+import { ManagePermissionsDialog } from '@/components/roles/manage-permissions-dialog';
 import { useSession } from 'next-auth/react';
 import { hasPermission } from '@/lib/auth';
+import { useDebouncedSearch } from '@/hooks/use-debounced-search';
 
-interface UsersDataTableProps {
-    data: User[];
+interface RolesDataTableProps {
+    data: Role[];
     totalCount: number;
     page: number;
     pageSize: number;
@@ -55,7 +53,7 @@ interface UsersDataTableProps {
     isLoading: boolean;
 }
 
-export function UsersDataTable({
+export function RolesDataTable({
     data,
     totalCount,
     page,
@@ -64,83 +62,61 @@ export function UsersDataTable({
     onPageSizeChange,
     onSearchChange,
     isLoading,
-}: UsersDataTableProps) {
-    const [editUser, setEditUser] = useState<User | null>(null);
-    const [deleteUser, setDeleteUser] = useState<User | null>(null);
-    const [assignRolesUser, setAssignRolesUser] = useState<User | null>(null);
+}: RolesDataTableProps) {
+    const [editRole, setEditRole] = useState<Role | null>(null);
+    const [deleteRole, setDeleteRole] = useState<Role | null>(null);
+    const [managePermissionsRole, setManagePermissionsRole] = useState<Role | null>(null);
 
     const { data: session } = useSession();
-    const canUpdate = hasPermission(session?.user || null, 'users:update');
-    const canDelete = hasPermission(session?.user || null, 'users:delete');
+    const canUpdate = hasPermission(session?.user || null, 'roles:update');
+    const canDelete = hasPermission(session?.user || null, 'roles:delete');
 
-    const columns: ColumnDef<User>[] = [
+    const columns: ColumnDef<Role>[] = [
         {
-            accessorKey: 'email',
-            header: () => <div className="text-left pl-18">User</div>,
+            accessorKey: 'name',
+            header: 'Role Name',
             cell: ({ row }) => {
-                const user = row.original;
+                const name = row.getValue('name') as string;
                 return (
-                    <div className="flex items-center space-x-3">
-                        <Avatar className="h-8 w-8">
-                            <AvatarImage src={user.avatarUrl} />
-                            <AvatarFallback>
-                                {getUserInitials(user.firstName, user.lastName)}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="font-medium">
-                                {user.firstName} {user.lastName}
-                            </p>
-                            <p className="text-sm text-muted-foreground">{user.email}</p>
-                        </div>
+                    <div className="flex items-center space-x-2">
+                        <Shield className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">{name}</span>
                     </div>
                 );
             },
         },
         {
-            accessorKey: 'roles',
-            header: 'Roles',
+            accessorKey: 'description',
+            header: 'Description',
             cell: ({ row }) => {
-                const roles = row.original.roles;
+                const description = row.getValue('description') as string;
                 return (
-                    <div className="flex flex-wrap gap-1">
-                        {roles.map((role) => (
-                            <Badge key={role.id} variant="secondary">
-                                {role.name}
-                            </Badge>
-                        ))}
-                    </div>
+                    <span className="text-muted-foreground">
+                        {description || 'No description'}
+                    </span>
                 );
             },
         },
         {
-            accessorKey: 'isActive',
-            header: 'Status',
+            id: 'users',
+            header: 'Users',
             cell: ({ row }) => {
-                const isActive = row.getValue('isActive');
-                return (
-                    <Badge variant={isActive ? 'default' : 'destructive'}>
-                        {isActive ? 'Active' : 'Inactive'}
-                    </Badge>
-                );
+                const count = row.original.userCount || 0;
+                return <Badge variant="secondary">{count} users</Badge>;
             },
         },
         {
-            accessorKey: 'emailVerified',
-            header: 'Verified',
+            id: 'permissions',
+            header: 'Permissions',
             cell: ({ row }) => {
-                const verified = row.getValue('emailVerified');
-                return (
-                    <Badge variant={verified ? 'default' : 'outline'}>
-                        {verified ? 'Yes' : 'No'}
-                    </Badge>
-                );
+                const count = row.original.permissionCount || 0;
+                return <Badge variant="outline">{count} permissions</Badge>;
             },
         },
         {
             id: 'actions',
             cell: ({ row }) => {
-                const user = row.original;
+                const role = row.original;
 
                 return (
                     <DropdownMenu>
@@ -154,19 +130,19 @@ export function UsersDataTable({
                             <DropdownMenuSeparator />
                             {canUpdate && (
                                 <>
-                                    <DropdownMenuItem onClick={() => setEditUser(user)}>
+                                    <DropdownMenuItem onClick={() => setEditRole(role)}>
                                         <Edit className="mr-2 h-4 w-4" />
                                         Edit
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => setAssignRolesUser(user)}>
+                                    <DropdownMenuItem onClick={() => setManagePermissionsRole(role)}>
                                         <Shield className="mr-2 h-4 w-4" />
-                                        Assign Roles
+                                        Manage Permissions
                                     </DropdownMenuItem>
                                 </>
                             )}
                             {canDelete && (
                                 <DropdownMenuItem
-                                    onClick={() => setDeleteUser(user)}
+                                    onClick={() => setDeleteRole(role)}
                                     className="text-red-600"
                                 >
                                     <Trash2 className="mr-2 h-4 w-4" />
@@ -191,8 +167,8 @@ export function UsersDataTable({
     const { searchValue, handleSearch } = useDebouncedSearch({
         onSearchChange,
         onPageChange,
-        delay: 500
     });
+
 
     const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -203,7 +179,7 @@ export function UsersDataTable({
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search users..."
+                        placeholder="Search roles..."
                         value={searchValue}
                         onChange={(e) => handleSearch(e.target.value)}
                         className="pl-9"
@@ -259,14 +235,14 @@ export function UsersDataTable({
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between ">
-                <div className="flex items-center space-x-2 ">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
                     <p className="text-sm text-muted-foreground">
                         Showing {(page - 1) * pageSize + 1} to{' '}
                         {Math.min(page * pageSize, totalCount)} of {totalCount} results
                     </p>
                 </div>
-                <div className="flex items-center space-x-2 ">
+                <div className="flex items-center space-x-2">
                     <Select
                         value={pageSize.toString()}
                         onValueChange={(value) => {
@@ -309,25 +285,25 @@ export function UsersDataTable({
             </div>
 
             {/* Dialogs */}
-            {editUser && (
-                <EditUserDialog
-                    user={editUser}
-                    open={!!editUser}
-                    onOpenChange={(open) => !open && setEditUser(null)}
+            {editRole && (
+                <EditRoleDialog
+                    role={editRole}
+                    open={!!editRole}
+                    onOpenChange={(open) => !open && setEditRole(null)}
                 />
             )}
-            {deleteUser && (
-                <DeleteUserDialog
-                    user={deleteUser}
-                    open={!!deleteUser}
-                    onOpenChange={(open) => !open && setDeleteUser(null)}
+            {deleteRole && (
+                <DeleteRoleDialog
+                    role={deleteRole}
+                    open={!!deleteRole}
+                    onOpenChange={(open) => !open && setDeleteRole(null)}
                 />
             )}
-            {assignRolesUser && (
-                <AssignRolesDialog
-                    user={assignRolesUser}
-                    open={!!assignRolesUser}
-                    onOpenChange={(open) => !open && setAssignRolesUser(null)}
+            {managePermissionsRole && (
+                <ManagePermissionsDialog
+                    role={managePermissionsRole}
+                    open={!!managePermissionsRole}
+                    onOpenChange={(open) => !open && setManagePermissionsRole(null)}
                 />
             )}
         </div>

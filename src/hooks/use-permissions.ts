@@ -51,7 +51,7 @@ export function useCreatePermission() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
-      toast.success('Permission created successfully');
+      toast.success('Permission created successfully', { position: "top-center" });
     },
     onError: (error) => {
       toast.error(handleApiError(error));
@@ -71,7 +71,7 @@ export function useUpdatePermission() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
       queryClient.invalidateQueries({ queryKey: ['permissions', variables.id] });
-      toast.success('Permission updated successfully');
+      toast.success('Permission updated successfully', { position: "top-center" });
     },
     onError: (error) => {
       toast.error(handleApiError(error));
@@ -90,7 +90,7 @@ export function useDeletePermission() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['permissions'] });
-      toast.success('Permission deleted successfully');
+      toast.success('Permission deleted successfully', { position: "top-center" });
     },
     onError: (error) => {
       toast.error(handleApiError(error));

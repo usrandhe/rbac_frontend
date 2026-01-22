@@ -40,7 +40,7 @@ export function useCreateRole() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
-      toast.success('Role created successfully');
+      toast.success('Role created successfully', { position: "top-center" });
     },
     onError: (error) => {
       toast.error(handleApiError(error));
@@ -60,7 +60,7 @@ export function useUpdateRole() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       queryClient.invalidateQueries({ queryKey: ['roles', variables.id] });
-      toast.success('Role updated successfully');
+      toast.success('Role updated successfully', { position: "top-center" });
     },
     onError: (error) => {
       toast.error(handleApiError(error));
@@ -79,7 +79,7 @@ export function useDeleteRole() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
-      toast.success('Role deleted successfully');
+      toast.success('Role deleted successfully', { position: "top-center" });
     },
     onError: (error) => {
       toast.error(handleApiError(error));
@@ -99,7 +99,7 @@ export function useAssignPermissions() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       queryClient.invalidateQueries({ queryKey: ['roles', variables.id] });
-      toast.success('Permissions assigned successfully');
+      toast.success('Permissions assigned successfully', { position: "top-center" });
     },
     onError: (error) => {
       toast.error(handleApiError(error));
@@ -119,7 +119,7 @@ export function useAddPermission() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       queryClient.invalidateQueries({ queryKey: ['roles', variables.roleId] });
-      toast.success('Permission added successfully');
+      toast.success('Permission added successfully', { position: "top-center" });
     },
     onError: (error) => {
       toast.error(handleApiError(error));
@@ -139,7 +139,7 @@ export function useRemovePermission() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       queryClient.invalidateQueries({ queryKey: ['roles', variables.roleId] });
-      toast.success('Permission removed successfully');
+      toast.success('Permission removed successfully', { position: "top-center" });
     },
     onError: (error) => {
       toast.error(handleApiError(error));
