@@ -21,18 +21,18 @@ export function useLogin() {
       });
       
       if (result?.error) {
-        throw new Error(result.error);
+        throw new Error(result.code);
       }
 
       return result;
     },
     onSuccess: () => {
-      toast.success('Login successful');
+      toast.success('Login Successful');
       router.push('/dashboard');
       router.refresh();
     },
     onError: (error: Error) => {
-      toast.error(error.message || 'Login failed');
+      toast.error(error.message || 'Login Failed');
     },
   });
 }

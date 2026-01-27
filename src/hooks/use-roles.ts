@@ -42,8 +42,9 @@ export function useCreateRole() {
       queryClient.invalidateQueries({ queryKey: ['roles'] });
       toast.success('Role created successfully', { position: "top-center" });
     },
-    onError: (error) => {
-      toast.error(handleApiError(error));
+    onError: (error: any) => {
+      const message = error?.response?.data?.error[0].message;
+      toast.error(message);
     },
   });
 }

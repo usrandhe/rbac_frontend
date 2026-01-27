@@ -1,6 +1,14 @@
-import NextAuth from 'next-auth';
+import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import axios from 'axios';
+
+
+class CustomError extends CredentialsSignin {
+  constructor(message: string) {
+    super(message);
+    this.code = message;
+  }
+}
 
 const API_URL = process.env.INTERNAL_API_URL || 'http://localhost:5000/api/v1';
 
@@ -43,7 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         } catch (error: any) {
           const message = error.response?.data?.message || 'Invalid credentials';
-          throw new Error(message);
+          throw new CustomError(message);
         }
       },
     }),

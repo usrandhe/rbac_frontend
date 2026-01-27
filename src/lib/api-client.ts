@@ -66,7 +66,7 @@ export default apiClient;
 // Helper function to handle API errors
 export const handleApiError = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
-    const message = error.response?.data?.message;
+    const message = error.response?.data?.error[0].message;
     if (message) return message;
 
     if (error.response?.status === 404) return 'Resource not found';
