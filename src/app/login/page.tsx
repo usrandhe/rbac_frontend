@@ -45,7 +45,7 @@ export default function LoginPage() {
       from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-2">
         <Card className="w-full max-w-md border-none shadow-lg outline outline-black/5 rounded-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Welcome back</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center">Welcome</CardTitle>
             <CardDescription className="text-center">
               Enter your credentials to access your account
             </CardDescription>
@@ -66,7 +66,7 @@ export default function LoginPage() {
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-sm text-destructive text-red-500">{errors.email.message}</p>
+                  <p className="text-sm text-destructive">{errors.email.message}</p>
                 )}
               </div>
 
@@ -84,7 +84,7 @@ export default function LoginPage() {
                   />
                 </div>
                 {errors.password && (
-                  <p className="text-sm text-destructive text-red-500">{errors.password.message}</p>
+                  <p className="text-sm text-destructive">{errors.password.message}</p>
                 )}
               </div>
 
