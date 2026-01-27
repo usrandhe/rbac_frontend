@@ -30,7 +30,7 @@ import { Loader2 } from 'lucide-react';
 const editPermissionSchema = z.object({
   resource: z.string().min(2, 'Resource must be at least 2 characters'),
   action: z.string().min(2, 'Action must be at least 2 characters'),
-  description: z.string().optional(),
+  description: z.string().min(2, 'Description must be at least 2 characters'),
 });
 
 type EditPermissionFormData = z.infer<typeof editPermissionSchema>;
@@ -161,7 +161,7 @@ export function EditPermissionDialog({ permission, open, onOpenChange }: EditPer
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description (Optional)</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               placeholder="Describe what this permission allows"

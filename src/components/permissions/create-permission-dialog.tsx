@@ -28,7 +28,7 @@ import { Loader2 } from 'lucide-react';
 const createPermissionSchema = z.object({
   resource: z.string().min(2, 'Resource must be at least 2 characters'),
   action: z.string().min(2, 'Action must be at least 2 characters'),
-  description: z.string().optional(),
+  description: z.string().min(2, 'Description must be at least 2 characters'),
 });
 
 type CreatePermissionFormData = z.infer<typeof createPermissionSchema>;
@@ -99,6 +99,7 @@ export function CreatePermissionDialog({ open, onOpenChange }: CreatePermissionD
               placeholder="Or enter custom resource"
               {...register('resource')}
               className="mt-2"
+              disabled
             />
             {errors.resource && (
               <p className="text-sm text-destructive">{errors.resource.message}</p>
@@ -127,6 +128,7 @@ export function CreatePermissionDialog({ open, onOpenChange }: CreatePermissionD
               placeholder="Or enter custom action"
               {...register('action')}
               className="mt-2"
+              disabled
             />
             {errors.action && (
               <p className="text-sm text-destructive">{errors.action.message}</p>
@@ -143,7 +145,7 @@ export function CreatePermissionDialog({ open, onOpenChange }: CreatePermissionD
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description (Optional)</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
               placeholder="Describe what this permission allows"
