@@ -129,7 +129,7 @@ export function PermissionsDataTable({
             id: 'roles',
             header: 'Roles',
             cell: ({ row }) => {
-                const count = row.original._count?.roles || 0;
+                const count = row.original.roleCount || 0;
                 return <Badge variant="secondary">{count} role(s)</Badge>;
             },
         },

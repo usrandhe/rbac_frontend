@@ -89,6 +89,7 @@ export interface Permission {
   _count?: {
     roles: number;
   };
+  roleCount: number;
 }
 
 export interface CreatePermissionInput {
